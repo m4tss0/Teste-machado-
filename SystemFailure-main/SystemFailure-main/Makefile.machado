@@ -1,0 +1,32 @@
+# Makefile.machado - compila a versao COM O MACHADO sem mexer no Makefile original.
+#
+#   make -f Makefile.machado          gera build/machado.nes
+#   make -f Makefile.machado run      gera e abre no Mesen
+#   make -f Makefile.machado chr      regera assets/Tiles/TitleSprites_machado.chr
+#   make -f Makefile.machado clean    apaga so os arquivos do machado em build/
+#
+# Usa o mesmo cfg/nes.cfg do jogo. "-I src" deixa o ca65 achar o src/machado.s.
+
+.PHONY: all run chr clean
+
+all: build/machado.nes
+
+# o CHR com o machado e gerado a partir do TitleSprites.chr original + a arte do machado
+assets/Tiles/TitleSprites_machado.chr: assets/Tiles/TitleSprites.chr assets/Machado/machado_slots.chr tools/mesclar_machado.py
+	python3 tools/mesclar_machado.py
+
+chr:
+	python3 tools/mesclar_machado.py
+
+build/main_machado.o: src/main_machado.s src/machado.s assets/Tiles/TitleSprites_machado.chr assets/Tiles/Rooms.chr
+	mkdir -p build
+	ca65 -I src src/main_machado.s -o build/main_machado.o
+
+build/machado.nes: build/main_machado.o cfg/nes.cfg
+	ld65 -C cfg/nes.cfg build/main_machado.o -o build/machado.nes
+
+run: build/machado.nes
+	mesen build/machado.nes
+
+clean:
+	rm -f build/main_machado.o build/machado.nes
