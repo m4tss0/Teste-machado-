@@ -2,7 +2,7 @@
 #
 #   make -f Makefile.machado          gera build/machado.nes
 #   make -f Makefile.machado run      gera e abre no Mesen
-#   make -f Makefile.machado chr      regera assets/Tiles/TitleSprites_machado.chr
+#   make -f Makefile.machado chr      (opcional, precisa de Python) regera assets/Tiles/TitleSprites_machado.chr
 #   make -f Makefile.machado clean    apaga so os arquivos do machado em build/
 #
 # A pasta build/ ja vem no repositorio (nao ha mkdir aqui: o 'mkdir -p' nao existe no cmd do Windows).
@@ -12,14 +12,12 @@
 
 all: build/machado.nes
 
-# o CHR com o machado e gerado a partir do TitleSprites.chr original + a arte do machado
-assets/Tiles/TitleSprites_machado.chr: assets/Tiles/TitleSprites.chr assets/Machado/machado_slots.chr tools/mesclar_machado.py
-	python3 tools/mesclar_machado.py
-
+# O assets/Tiles/TitleSprites_machado.chr ja vem pronto no repositorio. A compilacao NAO o regera
+# (nao precisa de Python). So use "chr" se mudar a arte do machado.
 chr:
 	python3 tools/mesclar_machado.py
 
-build/main_machado.o: src/main_machado.s src/machado.s assets/Tiles/TitleSprites_machado.chr assets/Tiles/Rooms.chr
+build/main_machado.o: src/main_machado.s src/machado.s
 	ca65 -I src src/main_machado.s -o build/main_machado.o
 
 build/machado.nes: build/main_machado.o cfg/nes.cfg
