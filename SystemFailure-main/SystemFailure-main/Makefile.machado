@@ -5,6 +5,7 @@
 #   make -f Makefile.machado chr      regera assets/Tiles/TitleSprites_machado.chr
 #   make -f Makefile.machado clean    apaga so os arquivos do machado em build/
 #
+# A pasta build/ ja vem no repositorio (nao ha mkdir aqui: o 'mkdir -p' nao existe no cmd do Windows).
 # Usa o mesmo cfg/nes.cfg do jogo. "-I src" deixa o ca65 achar o src/machado.s.
 
 .PHONY: all run chr clean
@@ -19,7 +20,6 @@ chr:
 	python3 tools/mesclar_machado.py
 
 build/main_machado.o: src/main_machado.s src/machado.s assets/Tiles/TitleSprites_machado.chr assets/Tiles/Rooms.chr
-	mkdir -p build
 	ca65 -I src src/main_machado.s -o build/main_machado.o
 
 build/machado.nes: build/main_machado.o cfg/nes.cfg
