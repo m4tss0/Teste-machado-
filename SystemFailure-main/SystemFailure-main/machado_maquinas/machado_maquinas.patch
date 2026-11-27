@@ -1,0 +1,82 @@
+diff --git a/src/machado.s b/src/machado.s
+index c775dc2..fb0cb12 100644
+--- a/src/machado.s
++++ b/src/machado.s
+@@ -1,12 +1,21 @@
+ 
++; -----------------------------------------------------------------------------
++;  A Sala de Maquinas: se o constantes.inc ainda nao tem ROOM_MAQUINAS, define aqui (e a sala numero 2,
++;  a terceira nas tabelas room_* de salas.s). O chaves.s faz a mesma coisa, e nao conflita.
++; -----------------------------------------------------------------------------
++.ifndef ROOM_MAQUINAS
++ROOM_MAQUINAS = 2
++.endif
++
+ ; -----------------------------------------------------------------------------
+ ;  CONFIGURACAO (so aqui voce mexe)
+ ; -----------------------------------------------------------------------------
+ AX_PALETA    = 3            ; paleta de sprite do machado: a 3 do main.s ($0F,$07,$10,$28 = "itens")
+ AX_OAM_MAO   = $10          ; byte da OAM onde ficam os 4 sprites do machado na mao
+ AX_OAM_CHAO  = $20          ; byte da OAM onde ficam os 4 sprites do machado no chao
+-AX_ITEM_X    = 32           ; onde o machado fica parado no chao (canto de cima/esquerda, em pixels)
+-AX_ITEM_Y    = 32
++AX_SALA      = ROOM_MAQUINAS ; sala onde o machado fica no chao: so la ele aparece e so la da pra pegar
++AX_ITEM_X    = 224          ; onde o machado fica parado no chao (canto de cima/esquerda, em pixels):
++AX_ITEM_Y    = 128          ; corredor da direita da Sala de Maquinas, logo abaixo da lixeira
+ AX_PERTO     = 12           ; distancia (pixels) para o personagem "pegar" o machado
+ AX_QUADRO_CHAO = 15         ; numero do quadro do machado no chao (os de 0 a 14 sao os da mao)
+ 
+@@ -46,6 +55,9 @@ ax_vdy:     .res 1          ; deslocamento Y do quadro em relacao ao personagem
+ .proc machado_update
+     lda ax_have             ; A <- 1 se o personagem ja esta com o machado. X, Y intactos
+     bne @desenha            ; ja pegou? nao precisa testar de novo. A, X, Y intactos
++    lda room                ; A <- sala em que o personagem esta agora. X, Y intactos
++    cmp #AX_SALA            ; e a sala do machado? Z = 1 se sim. X, Y intactos
++    bne @desenha            ; outra sala? o machado nao esta aqui, entao nao da pra pegar. A, X, Y intactos
+ 
+     ; --- perto em X?  |player_x - AX_ITEM_X| < AX_PERTO  (conta em 8 bits, sem sinal) ---
+     lda player_x            ; A <- X do personagem. X, Y intactos
+@@ -81,14 +93,29 @@ ax_vdy:     .res 1          ; deslocamento Y do quadro em relacao ao personagem
+     lda ax_have             ; A <- 0 (no chao) ou 1 (na mao). X, Y intactos
+     bne @na_mao             ; esta com o personagem? desenha na mao. A, X, Y intactos
+ 
+-    ; ---------- machado PARADO no chao ----------
++    ; ---------- machado PARADO no chao (so na sala AX_SALA) ----------
++    lda room                ; A <- sala atual. X, Y intactos
++    cmp #AX_SALA            ; e a sala do machado? Z = 1 se sim. X, Y intactos
++    beq @no_chao            ; sim? desenha. A, X, Y intactos
++    ldx #AX_OAM_CHAO        ; X <- onde ficam os sprites do chao na OAM. A, Y intactos
++    jmp ax_hide             ; outra sala: esconde o machado do chao e volta (o rts do ax_hide). Altera A
++@no_chao:
+     ldx #AX_QUADRO_CHAO     ; X <- quadro do machado no chao (15). A, Y intactos
+     lda ax_tab_tile,x       ; A <- tile de cima/esquerda desse quadro. X, Y intactos
+     sta ax_tile             ; [ax_tile] <- A. A, X, Y intactos
+     lda #AX_ITEM_X          ; A <- X fixo do machado no chao. X, Y intactos
+     sta ax_x                ; [ax_x] <- A. A, X, Y intactos
+-    lda #AX_ITEM_Y          ; A <- Y fixo do machado no chao. X, Y intactos
+-    sta ax_y                ; [ax_y] <- A. A, X, Y intactos
++    ; --- flutua: sobe e desce 0 a 3 pixels, em degraus de 8 quadros (igual as chaves) ---
++    lda anim_timer          ; A <- relogio das animacoes. X, Y intactos
++    lsr a                   ; A <- A / 2. X, Y intactos
++    lsr a                   ; A <- A / 4. X, Y intactos
++    lsr a                   ; A <- A / 8: o passo muda a cada 8 quadros (tire um lsr para ir 2x mais rapido). X, Y intactos
++    and #%00000111          ; A <- A mod 8: passo 0 a 7 do ciclo. X, Y intactos
++    tay                     ; Y <- passo, indice da tabela da subida. A, X intactos
++    lda #AX_ITEM_Y          ; A <- Y do machado no chao. X, Y intactos
++    sec                     ; C <- 1, antes de subtrair. A, X, Y intactos
++    sbc ax_tab_sobe, y      ; A <- Y no chao - subida: quanto maior a subida, mais alto na tela. X, Y intactos
++    sta ax_y                ; [ax_y] <- A: Y do machado neste quadro. A, X, Y intactos
+     lda #$00                ; A <- 0. X, Y intactos
+     sta ax_flip             ; [ax_flip] <- 0: sem espelhar. A, X, Y intactos
+     ldx #AX_OAM_CHAO        ; X <- posicao do machado do chao na OAM. A, Y intactos
+@@ -260,6 +287,10 @@ ax_vdy:     .res 1          ; deslocamento Y do quadro em relacao ao personagem
+ ; Valor = 5 * conjunto:  0 = "direita" (a esquerda usa o mesmo, espelhado) | 5 = "baixo" | 10 = "cima"
+ ax_tab_set:  .byte 5, 10, 0, 0
+ 
++; Quanto o machado do CHAO sobe em cada um dos 8 passos do ciclo (pixels). Igual ao das chaves:
++; 0 = no chao, 3 = no alto. Um ciclo dura 64 quadros (8 passos de 8 quadros).
++ax_tab_sobe: .byte 0, 1, 2, 3, 3, 2, 1, 0
++
+ ; Tile de cima/esquerda de cada quadro (indice 0 a 14 = mao, 15 = machado no chao).
+ ; Cada quadro e um bloco 2x2 na grade do NEXXT: T, T+1, T+$10, T+$11.
+ ax_tab_tile: .byte $C0,$C2,$C4,$C6,$C8,$CA,$CC,$CE
