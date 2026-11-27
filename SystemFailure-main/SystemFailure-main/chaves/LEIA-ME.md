@@ -1,6 +1,6 @@
 # Chaves (verde e azul): lugar sorteado e flutuando
 
-Cada chave **sorteia 1 entre 3 lugares possíveis** (os círculos vermelhos dos mapas) e flutua no lugar sorteado.
+Cada chave **sorteia 1 entre 3 lugares possíveis** (os círculos vermelhos dos mapas) e flutua no lugar sorteado. As chaves são desenhadas **deitadas** (na horizontal).
 
 | Chave | Sala | O que abre | Cor | Lugares possíveis |
 |---|---|---|---|---|
@@ -49,6 +49,12 @@ git push -u origin chaves
 ```
 
 E abra um Pull Request da branch `chaves` para a `main` no GitHub. Quem aceitar o PR coloca na `main`.
+
+## O desenho: chave deitada
+
+A chave está **na horizontal**: argola à esquerda, haste para a direita e dois dentes para baixo, com o brilho em cima. Ela ocupa 16 pixels de largura e 10 de altura, no meio do quadrado de 16x16. **A posição é a mesma de antes** (o par X/Y é o canto do quadrado, e a chave fica centrada nele), e o sorteio e a flutuação não mudaram.
+
+A mudança foi só o desenho nos 8 tiles das chaves (`$30-$33` e `$40-$43`). O `chaves.s` e as 4 linhas do `main.s` continuam iguais; por isso, se você já aplicou a versão anterior no seu AOC, só precisa trocar o `TitleSprites.chr`. A versão **em pé** continua no histórico do git (commit `3e425ff` desta branch), caso queiram comparar.
 
 ## O que alterar para incluir no jogo final
 
@@ -149,7 +155,7 @@ passo:      0  1  2  3  4  5  6  7        cada passo dura 8 quadros
 sobe (px):  0  1  2  3  3  2  1  0        ciclo de 64 quadros; a azul começa 4 passos adiante
 ```
 
-Para ficar mais rápida, tire um `lsr a` de `chave_desenha`. Para mudar a altura, edite `ck_tab_sobe`. Veja `chaves_ciclo.png`.
+Para ficar mais rápida, tire um `lsr a` de `chave_desenha`. Para mudar a altura, edite `ck_tab_sobe`. Veja `chaves_ciclo.png` (os 8 passos da chave verde; a linha vermelha é o topo do quadrado de 16x16).
 
 ## Cores e tiles
 
