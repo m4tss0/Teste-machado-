@@ -1,0 +1,36 @@
+diff --git a/src/main.s b/src/main.s
+index 0ae7707..fab3b3e 100644
+--- a/src/main.s
++++ b/src/main.s
+@@ -106,6 +106,7 @@ wait_frame:
+ 
+ ; ---- estado 0: tela inicial ----
+ state_title:
++    jsr chaves_tick         ; CHAVES: conta o tempo na tela inicial (semente do sorteio)
+     lda pad1
+     and #BTN_START
+     beq main_loop           ; START nao esta apertado
+@@ -124,6 +125,7 @@ state_game:
+     jsr fog_update          ; descobre os tiles em volta do personagem
+     jsr draw_player         ; escreve os 4 sprites na copia da OAM
+     jsr machado_update     ; atualiza o machado 
++    jsr chaves_update       ; CHAVES: desenha as chaves da sala atual, flutuando
+     jmp main_loop
+ 
+ ; =============================================================================
+@@ -142,6 +144,7 @@ state_game:
+     sta attack_timer        ; machado_init desenha o machado e le attack_timer
+     jsr machado_init        ; machado comeca no chao
+     jsr hud_init            ; vida cheia, sem itens, 0 pontos
++    jsr chaves_init         ; CHAVES: sorteia o lugar de cada chave
+ 
+     lda #1
+     sta game_state
+@@ -160,6 +163,7 @@ state_game:
+ .include "controle.s"
+ .include "ppu.s"
+ .include "machado.s"
++.include "chaves.s"
+ .include "hud.s"
+ 
+ .segment "CODE"
