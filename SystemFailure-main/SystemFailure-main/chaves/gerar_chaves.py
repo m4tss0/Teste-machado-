@@ -26,29 +26,30 @@ Uso:
 
 O script RECUSA e nao grava nada se algum dos 8 tiles de destino ja tiver desenho.
 Para mudar o desenho, edite o texto de CHAVE (16 linhas de 16 caracteres).
-A chave e DEITADA (horizontal); a versao em pe (vertical) esta no historico do git.
+A chave e DEITADA (horizontal) e MENOR (12x8). A versao em pe (vertical) e a deitada de 16x10 estao no historico do git.
 So precisa de Python 3 (sem bibliotecas extras).
 """
 import argparse
 import os
 import sys
 
-# Desenho base: chave DEITADA (argola a esquerda, haste para a direita, 2 dentes para baixo).
-# . = transparente | 1 = contorno | 2 = corpo | 3 = brilho
+# Desenho base: chave DEITADA e MENOR (12 x 8 pixels, centrada no quadrado de 16x16):
+# argola a esquerda, haste para a direita, 2 dentes para baixo, com contorno e luz.
+# . = transparente | 1 = contorno | 2 = corpo | 3 = luz (brilho)
 CHAVE = [
     "................",
     "................",
     "................",
-    "..111111........",
-    ".11333211.......",
-    "1132222211......",
-    "132....221111111",
-    "122....223333321",
-    "122....222222221",
-    "122....221221221",
-    "1122222211221221",
-    ".112222111111111",
-    "..111111........",
+    "................",
+    "...111111.......",
+    "..11332211......",
+    "..132222211111..",
+    "..122..2233321..",
+    "..122..2222221..",
+    "..122222212121..",
+    "..112222112121..",
+    "...11111111111..",
+    "................",
     "................",
     "................",
     "................",

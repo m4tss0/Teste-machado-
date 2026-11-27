@@ -1,6 +1,6 @@
 # Chaves (verde e azul): lugar sorteado e flutuando
 
-Cada chave **sorteia 1 entre 3 lugares possíveis** (os círculos vermelhos dos mapas) e flutua no lugar sorteado. As chaves são desenhadas **deitadas** (na horizontal).
+Cada chave **sorteia 1 entre 3 lugares possíveis** (os círculos vermelhos dos mapas) e flutua no lugar sorteado. As chaves são desenhadas **deitadas** (na horizontal) e **pequenas** (12x8 pixels).
 
 | Chave | Sala | O que abre | Cor | Lugares possíveis |
 |---|---|---|---|---|
@@ -50,11 +50,13 @@ git push -u origin chaves
 
 E abra um Pull Request da branch `chaves` para a `main` no GitHub. Quem aceitar o PR coloca na `main`.
 
-## O desenho: chave deitada
+## O desenho: chave deitada e pequena
 
-A chave está **na horizontal**: argola à esquerda, haste para a direita e dois dentes para baixo, com o brilho em cima. Ela ocupa 16 pixels de largura e 10 de altura, no meio do quadrado de 16x16. **A posição é a mesma de antes** (o par X/Y é o canto do quadrado, e a chave fica centrada nele), e o sorteio e a flutuação não mudaram.
+A chave está **na horizontal** e é **pequena**: **12 x 8 pixels**, no meio do quadrado de 16x16 (sobram 2 pixels de cada lado e 4 em cima e embaixo). Tem argola vazada à esquerda, haste para a direita e dois dentes para baixo, com **contorno escuro** e **luz** (o brilho claro) no alto. **A posição é a mesma de antes**: o par X/Y é o canto do quadrado, e a chave fica centrada nele. O sorteio e a flutuação não mudaram.
 
-A mudança foi só o desenho nos 8 tiles das chaves (`$30-$33` e `$40-$43`). O `chaves.s` e as 4 linhas do `main.s` continuam iguais; por isso, se você já aplicou a versão anterior no seu AOC, só precisa trocar o `TitleSprites.chr`. A versão **em pé** continua no histórico do git (commit `3e425ff` desta branch), caso queiram comparar.
+Essa foi a opção escolhida entre três tamanhos e acabamentos: veja `opcoes_tamanho/`, que ficou como registro da comparação (as opções 1 e 2 e a versão anterior de 16x10). A escolhida é a **Opção 1**.
+
+A mudança, em relação à versão anterior, foi só o desenho nos 8 tiles das chaves (`$30-$33` e `$40-$43`). O `chaves.s` e as 4 linhas do `main.s` continuam iguais; por isso, se você já aplicou a versão anterior no seu AOC, só precisa trocar o `TitleSprites.chr`. As versões anteriores (em pé; deitada de 16x10) continuam no histórico do git (commits `3e425ff` e `04b39b2` desta branch).
 
 ## O que alterar para incluir no jogo final
 
