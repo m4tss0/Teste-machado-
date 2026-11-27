@@ -11,6 +11,45 @@ Cada chave **só aparece na sala dela** e fica escondida nas outras. O sorteio �
 
 **Ainda não existe:** pegar a chave e abrir as portas (próxima etapa). A chave só flutua no lugar sorteado.
 
+## Testar o jogo do AOC com as chaves, sem fazer commit
+
+Nada abaixo cria commit nem altera o repositório de vocês.
+
+### Jeito 1: só abrir a ROM (não precisa instalar nada)
+
+Abra no Mesen o **`jogo_AOC_com_chaves.nes`**. É o jogo atual do AOC (commit `ebe0801`) **com as chaves**, exatamente o que o passo "O que alterar para incluir no jogo final" (abaixo) produz.
+
+- A chave **verde** aparece no Quarto 2, num dos 3 lugares sorteados.
+- A chave **azul não aparece**: a Sala de Máquinas ainda não está ligada ao jogo, e a chave azul só aparece nela. É o esperado.
+
+Para ver as **duas chaves**, abra o `demo_chaves.nes`, que tem uma ligação provisória da Sala de Máquinas (porta no corredor da direita do Quarto 2).
+
+### Jeito 2: compilar no seu AOC
+
+1. **Faça uma cópia da pasta do AOC** (por exemplo `AOC-teste`). Assim o seu AOC original nunca é tocado, e para desfazer é só apagar a pasta de teste.
+2. Na cópia, copie `chaves.s` para `src/` e o `TitleSprites.chr` desta pasta por cima de `assets/Tiles/TitleSprites.chr`.
+3. Faça as 4 linhas no `src/main.s`. Duas opções:
+   - com o git instalado, na pasta da cópia: `git apply CAMINHO\chaves_main.patch` (o arquivo `chaves_main.patch` está nesta pasta);
+   - ou à mão, com as 4 linhas mostradas abaixo.
+4. Compile e abra: `make` (gera `build/SystemFailure.nes`) e abra esse arquivo no Mesen, ou `make run`.
+
+O patch foi feito para o AOC no commit `ebe0801`, e eu conferi que ele aplica sem conflito e que o jogo compila e roda. Se o `main.s` de vocês já tiver mudado nessas linhas, o `git apply` pode recusar: nesse caso faça as 4 linhas à mão.
+
+Se você fizer no AOC original em vez de numa cópia, para desfazer: `git restore src/main.s assets/Tiles/TitleSprites.chr` e apague `src/chaves.s`.
+
+### Depois de testar e aprovar (aí sim o commit)
+
+No AOC de vocês, numa branch nova (não direto na `main`):
+
+```
+git checkout -b chaves
+git add src/chaves.s src/main.s assets/Tiles/TitleSprites.chr
+git commit -m "Chaves verde e azul: lugar sorteado e flutuando"
+git push -u origin chaves
+```
+
+E abra um Pull Request da branch `chaves` para a `main` no GitHub. Quem aceitar o PR coloca na `main`.
+
 ## O que alterar para incluir no jogo final
 
 ### 1. Copiar 2 arquivos
@@ -134,7 +173,9 @@ Lembrete: o NES mostra no máximo 8 sprites por linha da tela. Personagem, macha
 |---|---|
 | `chaves.s` | O módulo (sorteio, sala, lugares e animação). Cada instrução está comentada com A/X/Y. |
 | `TitleSprites.chr` | O `TitleSprites.chr` do AOC com as 2 chaves. |
-| `demo_chaves.nes` | ROM de demonstração para o Mesen. |
+| `jogo_AOC_com_chaves.nes` | O jogo atual do AOC com as chaves (sem a Sala de Máquinas ligada). Para testar no Mesen. |
+| `chaves_main.patch` | As 4 linhas do `main.s` num arquivo, para `git apply`. |
+| `demo_chaves.nes` | ROM de demonstração para o Mesen, com ligação provisória da Sala de Máquinas. |
 | `gerar_chaves.py` | Gera o `TitleSprites.chr` com as chaves (o desenho está em texto). |
 | `chaves_lugares.png` | Os 6 lugares possíveis, como o jogo os desenha. |
 | `chaves_ciclo.png` | Os 8 passos da animação. |
