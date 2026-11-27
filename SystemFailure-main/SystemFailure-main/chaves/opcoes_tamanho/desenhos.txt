@@ -1,8 +1,9 @@
 # Desenhos das opcoes de chave (mesmo formato da lista CHAVE do gerar_chaves.py).
-# . = transparente | 1 = contorno | 2 = corpo | 3 = brilho (o 'sombreamento')
+# . = transparente | 1 = contorno (verde-escuro na verde, marrom na azul) | 2 = corpo | 3 = luz (brilho)
 # Nenhuma destas opcoes esta aplicada: os tiles da branch (TitleSprites.chr) continuam com o desenho ATUAL.
 
-# ATUAL (a que esta na branch)  (16 x 10 pixels, colunas 0-15, linhas 3-12)
+# ATUAL (a que esta na branch): com contorno e luz  (16 x 10 pixels, colunas 0-15, linhas 3-12)
+CHAVE = [
     "................",
     "................",
     "................",
@@ -19,8 +20,10 @@
     "................",
     "................",
     "................",
+]
 
-# OPCAO 1: menor, com brilho  (12 x 8 pixels, colunas 2-13, linhas 4-11)
+# OPCAO 1: menor, com contorno e luz  (12 x 8 pixels, colunas 2-13, linhas 4-11)
+CHAVE = [
     "................",
     "................",
     "................",
@@ -37,22 +40,25 @@
     "................",
     "................",
     "................",
+]
 
-# OPCAO 2: menor, sem sombreamento (sem o brilho)  (12 x 8 pixels, colunas 2-13, linhas 4-11)
+# OPCAO 2: menor, SEM contorno, com luz  (10 x 6 pixels, colunas 3-12, linhas 5-10)
+CHAVE = [
     "................",
     "................",
     "................",
     "................",
-    "...111111.......",
-    "..11222211......",
-    "..122222211111..",
-    "..122..2222221..",
-    "..122..2222221..",
-    "..122222212121..",
-    "..112222112121..",
-    "...11111111111..",
+    "................",
+    "....3322........",
+    "...322222.......",
+    "...22..223332...",
+    "...22..222222...",
+    "...222222.2.2...",
+    "....2222..2.2...",
     "................",
     "................",
     "................",
     "................",
+    "................",
+]
 
