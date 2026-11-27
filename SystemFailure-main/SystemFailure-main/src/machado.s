@@ -287,10 +287,12 @@ ax_tab_set:  .byte 5, 10, 0, 0
 ax_tab_tile: .byte $C0,$C2,$C4,$C6,$C8,$CA,$CC,$CE
              .byte $E0,$E2,$E4,$E6,$E8,$EA,$EC,$EE
 
-; Posicao de cada quadro em relacao ao personagem (com sinal; indice = conjunto * 5 + quadro).
+; Posicao de cada quadro em relacao ao personagem (indice = conjunto * 5 + quadro).
 ; Quadros de cada conjunto: 0 carregando A, 1 carregando B, 2 preparar, 3 golpe, 4 recuperar.
-;               --- direita ---------------   --- baixo ----------------   --- cima ------------------
-ax_tab_dx:   .byte   9,  10,   0,  12,  10,       9,  10,   3,   4,  -5,      -9, -10,  -1,  -1,  -3
-ax_tab_dy:   .byte  -3,  -4,  -9,   2,   8,      -1,  -2,  -8,  11,  13,      -4,  -4,   7, -10, -10
+; Os numeros sao COM SINAL, escritos em complemento de dois porque o ca65 nao aceita .byte negativo:
+;   $F6 = -10, $F7 = -9, $F8 = -8, $FB = -5, $FC = -4, $FD = -3, $FE = -2, $FF = -1
+;               --- direita ------------------   --- baixo --------------------   --- cima ---------------------
+ax_tab_dx:   .byte $09,$0A,$00,$0C,$0A,   $09,$0A,$03,$04,$FB,   $F7,$F6,$FF,$FF,$FD
+ax_tab_dy:   .byte $FD,$FC,$F7,$02,$08,   $FF,$FE,$F8,$0B,$0D,   $FC,$FC,$07,$F6,$F6
 
 .segment "CODE"
